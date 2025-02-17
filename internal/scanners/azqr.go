@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-package azqr
+package scanners
 
 import (
 	"context"
@@ -149,6 +149,21 @@ type (
 		Source              string
 	}
 
+	DefenderRecommendation struct {
+		SubscriptionId         string
+		SubscriptionName       string
+		ResourceGroupName      string
+		ResourceType           string
+		ResourceName           string
+		Category               string
+		RecommendationSeverity string
+		RecommendationName     string
+		ActionDescription      string
+		RemediationDescription string
+		AzPortalLink           string
+		ResourceId             string
+	}
+
 	RecommendationEngine struct{}
 
 	RecommendationImpact   string
@@ -161,13 +176,15 @@ const (
 	ImpactMedium RecommendationImpact = "Medium"
 	ImpactLow    RecommendationImpact = "Low"
 
-	CategoryHighAvailability      RecommendationCategory = "High Availability"
-	CategoryMonitoringAndAlerting RecommendationCategory = "Monitoring and Alerting"
-	CategoryScalability           RecommendationCategory = "Scalability"
-	CategoryDisasterRecovery      RecommendationCategory = "Disaster Recovery"
-	CategorySecurity              RecommendationCategory = "Security"
-	CategoryGovernance            RecommendationCategory = "Governance"
-	CategoryOtherBestPractices    RecommendationCategory = "Other Best Practices"
+	CategoryBusinessContinuity          RecommendationCategory = "BusinessContinuity"
+	CategoryDisasterRecovery            RecommendationCategory = "DisasterRecovery"
+	CategoryGovernance                  RecommendationCategory = "Governance"
+	CategoryHighAvailability            RecommendationCategory = "HighAvailability"
+	CategoryMonitoringAndAlerting       RecommendationCategory = "MonitoringAndAlerting"
+	CategoryOtherBestPractices          RecommendationCategory = "OtherBestPractices"
+	CategoryScalability                 RecommendationCategory = "Scalability"
+	CategorySecurity                    RecommendationCategory = "Security"
+	CategoryServiceUpgradeAndRetirement RecommendationCategory = "ServiceUpgradeAndRetirement"
 
 	TypeRecommendation RecommendationType = ""
 	TypeSLA            RecommendationType = "SLA"
@@ -294,4 +311,13 @@ func GetResourceGroupIDFromResourceID(resourceID string) string {
 	}
 
 	return strings.Join(parts[:5], "/")
+}
+
+// GetResourceNameFromResourceID - Get Resource Type from Resource ID
+func GetResourceTypeFromResourceID(resourceID string) string {
+	parts := strings.Split(resourceID, "/")
+	if len(parts) < 8 {
+		return ""
+	}
+	return fmt.Sprintf("%s/%s", parts[6], parts[7])
 }
